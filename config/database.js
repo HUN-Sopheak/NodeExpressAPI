@@ -15,7 +15,7 @@ connection.connect((err) => {
         throw err;
     }
 
-    console.log('Connected to the database successfully');
+    console.log('\x1b[32mConnected to the database successfully!\x1b[0m');
 });
 
 // Handle errors during the connection
