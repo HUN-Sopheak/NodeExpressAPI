@@ -1,17 +1,16 @@
-// routes/index.js
+// route/index.js
 const express = require('express');
+const { authenticateToken } = require('../middleware/auth'); // Adjust the path accordingly
 const router = express.Router();
 
-// Import other route files
+// Public route accessible without a token
+router.get('/public-route', (req, res) => {
+  res.json({ message: 'This is a public route' });
+});
 
-// Import other route files as needed
-
-// Use the imported routes
-router.get('/', (req,res)=>{
-res.send("hello world");
-})
-
-
-// Use other routes as needed
+// Protected route using the authenticateToken middleware
+router.get('/protected-route', authenticateToken, (req, res) => {
+  res.json({ message: 'This is a protected route', user: req.user });
+});
 
 module.exports = router;

@@ -1,21 +1,25 @@
-const jwt = require("jsonwebtoken");
+// middleware/auth.js
 
-const config = process.env;
+const jwt = require('jsonwebtoken');
+const secretKey = 'yourSecretKey';
 
-const authenticate = (req, res, next) => {
-  const token =
-    req.body.token || req.query.token || req.headers["x-access-token"];
+const authenticateToken = (req, res, next) => {
+  const token = req.header('Authorization');
 
   if (!token) {
-    return res.status(403).send("A token is required for authentication");
+    return res.status(401).json({ message: 'Unauthorized - Missing Token' });
   }
-  try {
-    const decoded = jwt.verify(token, config.TOKEN_KEY);
-    req.user = decoded;
-  } catch (err) {
-    return res.status(401).send("Invalid Token");
-  }
-  return next();
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Forbidden - Invalid Token' });
+    }
+
+    req.user = user;
+    next();
+  });
 };
 
-module.exports = authenticate;
+module.exports = {
+  authenticateToken,
+};
