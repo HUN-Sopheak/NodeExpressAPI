@@ -1,25 +1,47 @@
-// middleware/auth.js
-
 const jwt = require('jsonwebtoken');
-const secretKey = 'yourSecretKey';
+const bcrypt = require('bcryptjs');
 
-const authenticateToken = (req, res, next) => {
-  const token = req.header('Authorization');
+const generateSecretKey = async () => {
+	try {
+		const saltRounds = 10;
+		const randomString = await bcrypt.genSalt(saltRounds);
+		return await bcrypt.hash(randomString, saltRounds);
+	} catch (error) {
+		console.error('Error generating secret key:', error.message);
+		throw error;
+	}
+};
 
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized - Missing Token' });
-  }
+const authenticateToken = async (req, res, next) => {
+	try {
+		const token = req.header('Authorization');
 
-  jwt.verify(token, secretKey, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Forbidden - Invalid Token' });
-    }
+		if (!token) {
+			return res
+				.status(401)
+				.json({ message: 'Unauthorized - Missing Token' });
+		}
 
-    req.user = user;
-    next();
-  });
+		// Generate a new secret key dynamically
+		const dynamicSecretKey = await generateSecretKey();
+
+		// Verify the token using the dynamically generated secret key
+		jwt.verify(token, dynamicSecretKey, (err, user) => {
+			if (err) {
+				return res
+					.status(403)
+					.json({ message: 'Forbidden - Invalid Token' });
+			}
+
+			req.user = user;
+			next();
+		});
+	} catch (error) {
+		console.error('Error in authenticateToken:', error.message);
+		return res.status(500).json({ message: 'Internal Server Error' });
+	}
 };
 
 module.exports = {
-  authenticateToken,
+	authenticateToken,
 };
