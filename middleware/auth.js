@@ -1,16 +1,5 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-
-const generateSecretKey = async () => {
-	try {
-		const saltRounds = 10;
-		const randomString = await bcrypt.genSalt(saltRounds);
-		return await bcrypt.hash(randomString, saltRounds);
-	} catch (error) {
-		console.error('Error generating secret key:', error.message);
-		throw error;
-	}
-};
+const secretKey = require('../secretKeyGenerate');
 
 const authenticateToken = async (req, res, next) => {
 	try {
@@ -22,18 +11,16 @@ const authenticateToken = async (req, res, next) => {
 				.json({ message: 'Unauthorized - Missing Token' });
 		}
 
-		// Generate a new secret key dynamically
-		const dynamicSecretKey = await generateSecretKey();
-
 		// Verify the token using the dynamically generated secret key
-		jwt.verify(token, dynamicSecretKey, (err, user) => {
+		jwt.verify(token, secretKey, (err, user) => {
 			if (err) {
 				return res
 					.status(403)
 					.json({ message: 'Forbidden - Invalid Token' });
 			}
 
-			req.user = user;
+			// req.user = user;
+			res.status(200).json({ message: 'success' });
 			next();
 		});
 	} catch (error) {
