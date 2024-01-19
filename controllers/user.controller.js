@@ -2,7 +2,11 @@ const User = require('../models/user.model');
 
 const lists = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      where: {
+        deleted_at:null
+      }
+    });
     res.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
