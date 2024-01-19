@@ -1,18 +1,13 @@
-// route/index.js
 const express = require('express');
-const { authenticateToken } = require('../middleware/auth'); // Adjust the path accordingly
+const { authenticateToken } = require('../middleware/auth');
+const authController = require('../controllers/auth.controller'); // Adjust the path accordingly
 const router = express.Router();
-const authController = require('../controllers/authController');
+const user = require('./user.route');
 
-// Public route accessible without a token
+// login route
 router.post('/login', authController.login);
 
-// Protected route using the authenticateToken middleware
-router.get('/protected-route', authenticateToken, (req, res) => {
-    res.json({ message: 'This is a protected route', user: req.user });
-});
-router.get('/test', authenticateToken, (req, res) => {
-    res.json({ message: 'This is a protected route', user: req.user });
-});
+// user route
+user(router, authenticateToken);
 
 module.exports = router;
