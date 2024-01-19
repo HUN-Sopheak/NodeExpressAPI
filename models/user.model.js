@@ -1,8 +1,7 @@
 // models/User.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Updated import path
-
-const User = sequelize.define(
+const db = require('../config/database'); 
+const User = db.define(
 	'User',
 	{
 		id: {
@@ -18,6 +17,10 @@ const User = sequelize.define(
 		username: {
 			type: DataTypes.STRING,
 			allowNull: false,
+		},
+		image:{
+			type:DataTypes.STRING,
+			allowNull: true,
 		},
 		password: {
 			type: DataTypes.STRING,

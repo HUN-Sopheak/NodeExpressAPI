@@ -8,14 +8,14 @@ const authenticateToken = async(req, res, next) => {
         if (!token) {
             return res
                 .status(401)
-                .json({ message: 'Unauthorized - Missing Token' });
+                .json({ message: 'Unauthorized' });
         }
 
         jwt.sign(token, secretKey, (err, user) => {
             if (err) {
                 return res
                     .status(403)
-                    .json({ message: 'Forbidden - Invalid Token' });
+                    .json({ message: 'Forbidden' });
             }
             res.user = user;
             next();

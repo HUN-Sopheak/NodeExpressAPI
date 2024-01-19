@@ -13,15 +13,15 @@ const User = require('./models/user.model');
 		console.log('Database synchronized');
 	} catch (error) {
 		console.error('Error synchronizing database:', error);
-	} finally {
-		// Close the Sequelize connection (optional)
-		sequelize.close();
-	}
-})();
+	} 
+	// finally {
+	// 	sequelize.close();
+	// }
+});
 
 app.use(express.json());
 app.use('/api', routes);
 
-app.listen(port, () => {
-	console.log(`Server is running on port: http://localhost:${port}`);
+app.listen(port,() => {
+	console.log(`Server is running on port: ${port}`);
 });
