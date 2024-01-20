@@ -10,18 +10,22 @@ const User = require('./models/user.model');
 (async () => {
 	try {
 		await sequelize.sync();
-		console.log('Database synchronized');
 	} catch (error) {
 		console.error('Error synchronizing database:', error);
-	} 
-	// finally {
-	// 	sequelize.close();
-	// }
-});
+	} finally {
+		if (
+			!sequelize.connectionManager.pool ||
+			sequelize.connectionManager.pool.isDestroyed
+		) {
+			sequelize.close();
+			console.log('Database connection closed');
+		}
+	}
+})();
 
 app.use(express.json());
 app.use('/api', routes);
 
-app.listen(port,() => {
-	console.log(`Server is running on port: ${port}`);
+app.listen(port, () => {
+	console.log(`Server is running on port: http://locahost:${port}`);
 });
